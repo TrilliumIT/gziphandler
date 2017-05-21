@@ -201,6 +201,14 @@ func (w *GzipResponseWriter) Flush() {
 	}
 }
 
+func (w GzipResponseWriter) CloseNotify() <-chan bool {
+	c, ok := w.ResponseWriter.(http.CloseNotifier)
+	if !ok {
+		return make(chan bool)
+	}
+	return c.CloseNotify()
+}
+
 // Hijack implements http.Hijacker. If the underlying ResponseWriter is a
 // Hijacker, its Hijack method is returned. Otherwise an error is returned.
 func (w *GzipResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
